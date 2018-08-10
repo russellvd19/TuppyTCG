@@ -40,5 +40,9 @@ class Creature:
         self.defence = self.base_defence + self.weapon.defence + self.armor.defence + sum([upgrade.defence for upgrade in self.upgrades])
         self.speed = self.base_speed + self.weapon.speed + self.armor.speed + sum([upgrade.speed for upgrade in self.upgrades])
 
+        self.attack = max(self.attack, 0)
+        self.defence = max(self.defence, 0)
+        self.speed = max(self.speed, 0)
+
     def __repr__(self):
         return "{}:\n\tAttack: {}\n\tDefence: {}\n\tSpeed: {}".format(self.title, self.attack, self.defence, self.speed)
