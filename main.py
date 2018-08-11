@@ -1,8 +1,9 @@
 import csv
 import random
 from copy import deepcopy
-import texttable
+import time
 
+import texttable
 from creature import Creature
 from armor import Armor
 from weapon import Weapon
@@ -22,13 +23,105 @@ def run():
     p1_deck = make_deck()
     p1_hand = p1_deck[:5]
     print("Player 1's Hand")
+    print_cards(p1_hand)
 
+    while Creature not in [type(card) for card in p1_hand]:
+        print("You're hand didn't have a creature. Redrawing...")
+        random.shuffle(p1_deck)
+        p1_hand = p1_deck[:5]
+        print_cards(p1_hand)
+
+    while True:
+        get_user_action()
+
+
+def print_cards(card_list):
     table = texttable.Texttable()
-    table.header([""] + ["{}\n({})".format(card.title, type(card).__name__) for card in p1_hand])
-    table.add_row(["Attack:"] + [card.attack for card in p1_hand])
-    table.add_row(["Defence:"] + [card.defence for card in p1_hand])
-    table.add_row(["Speed:"] + [card.speed for card in p1_hand])
+    table.header([""] + ["{}\n({})".format(card.title, type(card).__name__) for card in card_list])
+    table.add_row(["Attack:"] + [card.attack for card in card_list])
+    table.add_row(["Defence:"] + [card.defence for card in card_list])
+    table.add_row(["Speed:"] + [card.speed for card in card_list])
     print(table.draw() + "\n")
+
+
+def get_user_action():
+    user_input = input("What would you like to do? ")
+
+    user_input = user_input.lower().strip()
+
+    if user_input == "help":
+        help()
+        return
+
+    if user_input.startswith("play "):
+        user_input = user_input[5:].strip()
+        if user_input.count(" on ") == 0:
+            actual_card = get_card(user_input)
+            if actual_card is not None:
+                play_card(actual_card)
+            else:
+                print("'{}' isn't a card you've got.".format(user_input))
+        else:
+            tokens = user_input.split(" on ")
+            for index in range(1, len(tokens)):
+                card1 = get_card(" on ".join(tokens[:index]))
+                card2 = get_card(" on ".join(tokens[index:]))
+                if card1 is not None and card2 is not None:
+                    play_card_on_card(card1, card2)
+                    break
+            else:
+                print("You have to list two valid cards to play them both.")
+
+        return
+
+    if user_input.startswith("attack "):
+        user_input = user_input[7:].strip()
+        tokens = user_input.split(" with ")
+        for index in range(1, len(tokens)):
+            card1 = get_card(" with ".join(tokens[:index]))
+            card2 = get_card(" with ".join(tokens[index:]))
+            if card1 is not None and card2 is not None:
+                attack_card_with_card(card1, card2)
+                return
+
+        print("That doesn't seem to be a proper use of the 'attack' command.")
+        return
+
+    if user_input == "end":
+        end_turn()
+        return
+
+    if user_input == "quit":
+        print("Thanks for playing!")
+        time.sleep(1)
+        quit()
+
+    print("What you entered doesn't seem to be valid. Here's some help.")
+    help()
+
+
+def end_turn():
+    pass
+
+
+def attack_card_with_card(card1, card2):
+    pass
+
+
+def get_card(card_name):
+    pass
+
+
+def help():
+    commands = {"help": "Prints this message.",
+                "play <card>": "Puts the specified card on the field.",
+                "play <card> on <card>": "Attempts to play the card on the other card.",
+                "attack <card> with <card>": "Attempts to have your card attack the other card.",
+                "end": "Ends your current turn. Play goes to the opposing player.",
+                "quit": "Quits the game."}
+    print("Command list:")
+    for command, description in commands.items():
+        print("'{}' :- {}".format(command, description))
 
 
 def play_card(card):
