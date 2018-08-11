@@ -6,4 +6,4 @@ class Upgrade:
         self.speed = speed
 
     def __repr__(self):
-        return "{}:\n\tAttack: {}\n\tDefence: {}\n\tSpeed: {}".format(self.title, self.attack, self.defence, self.speed)
+        return "({}) {}:\n\tAttack: {}\n\tDefence: {}\n\tSpeed: {}".format(self.__class__.__name__, self.title, self.attack, self.defence, self.speed)
