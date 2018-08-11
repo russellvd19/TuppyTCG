@@ -17,11 +17,13 @@ upgrade_cards = {}
 field = []
 unused_items_on_field = []
 discarded_cards = []
+p1_deck = []
 p1_hand = []
 
 
 def run():
     global p1_hand
+    global p1_deck
     p1_deck = make_deck()
     p1_hand = p1_deck[:5]
     print("Player 1's Hand")
@@ -33,6 +35,9 @@ def run():
         p1_hand = p1_deck[:5]
         print_cards(p1_hand)
 
+    p1_deck = p1_deck[5:]
+
+    start_turn()
     while True:
         get_user_action()
 
@@ -66,10 +71,10 @@ def get_user_action():
         else:
             tokens = user_input.split(" on ")
             for index in range(1, len(tokens)):
-                card1 = get_card(" on ".join(tokens[:index]))
-                card2 = get_card(" on ".join(tokens[index:]))
-                if card1 is not None and card2 is not None:
-                    play_card_on_card(card2, card1)
+                addon = get_card(" on ".join(tokens[:index]))
+                base = get_card(" on ".join(tokens[index:]))
+                if addon is not None and base is not None:
+                    play_card_on_card(base, addon)
                     break
             else:
                 print("You have to list two valid cards to play them both.")
@@ -91,6 +96,8 @@ def get_user_action():
 
     if user_input == "end":
         end_turn()
+        wait_for_turn()
+        start_turn()
         return
 
     if user_input == "field":
@@ -104,6 +111,11 @@ def get_user_action():
         return
     if user_input == "hand":
         print_cards(p1_hand)
+        return
+
+    if user_input == "draw":
+        draw_card()
+        return
 
     if user_input == "quit":
         print("Thanks for playing!")
@@ -115,7 +127,32 @@ def get_user_action():
 
 
 def end_turn():
-    pass
+    print("Your turn is done. Wait for the opponent to go.")
+
+
+def wait_for_turn():
+    time.sleep(3)
+    print("Opponent has finished their turn.")
+
+
+def start_turn():
+    print("It's your turn.")
+    draw_card()
+
+
+def draw_card():
+    global p1_deck
+    global p1_hand
+    if len(p1_deck) <= 0:
+        print("You ran out of cards. Game over for you. Bye now.")
+        time.sleep(3)
+        quit()
+
+    new_card = p1_deck[0]
+    print("You drew a '{}'".format(new_card.title))
+    p1_hand.append(new_card)
+    p1_deck = p1_deck[1:]
+    print_cards(p1_hand)
 
 
 def attack_card_with_card(card1, card2):
@@ -140,6 +177,7 @@ def help():
                 "play <card>": "Puts the specified card on the field.",
                 "play <card> on <card>": "Attempts to play the card on the other card.",
                 "attack <card> with <card>": "Attempts to have your card attack the other card.",
+                "draw": "You get to draw a card (you cheater)",
                 "end": "Ends your current turn. Play goes to the opposing player.",
                 "hand": "Prints the cards in your hand.",
                 "field": "Prints the cards on the field.",
@@ -172,7 +210,7 @@ def play_card(card):
 
 def play_card_on_card(base_card, addon_card):
     """Attaches a card to another card"""
-    if base_card not in field or base_card not in unused_items_on_field:
+    if base_card not in field and base_card not in unused_items_on_field:
         print("Only cards on the field can be targeted.")
         return
 

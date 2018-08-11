@@ -12,6 +12,7 @@ class Weapon:
     def upgrade(self, upgrade_card):
         """Upgrades the weapon"""
         self.upgrades.append(upgrade_card)
+        self.title = "{}, {}".format(upgrade_card.title, self.title)
         self.adjust_stats()
 
     def adjust_stats(self):
@@ -21,10 +22,8 @@ class Weapon:
         self.speed = self.base_speed + sum([upgrade.speed for upgrade in self.upgrades])
 
     def __repr__(self):
-        upgrade_string = ", ".join(u.title for u in self.upgrades) + " "
-        return "({}) {}{}:\n\tAttack: {}\n\tDefence: {}\n\tSpeed: {}".format(self.__class__.__name__, upgrade_string,
-                                                                             self.title, self.attack, self.defence,
-                                                                             self.speed)
+        return "({}) {}:\n\tAttack: {}\n\tDefence: {}\n\tSpeed: {}".format(self.__class__.__name__, self.title,
+                                                                           self.attack, self.defence, self.speed)
 
     def __bool__(self):
         if self.title == "":
