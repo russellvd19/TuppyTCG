@@ -17,9 +17,11 @@ upgrade_cards = {}
 field = []
 unused_items_on_field = []
 discarded_cards = []
+p1_hand = []
 
 
 def run():
+    global p1_hand
     p1_deck = make_deck()
     p1_hand = p1_deck[:5]
     print("Player 1's Hand")
@@ -67,7 +69,7 @@ def get_user_action():
                 card1 = get_card(" on ".join(tokens[:index]))
                 card2 = get_card(" on ".join(tokens[index:]))
                 if card1 is not None and card2 is not None:
-                    play_card_on_card(card1, card2)
+                    play_card_on_card(card2, card1)
                     break
             else:
                 print("You have to list two valid cards to play them both.")
@@ -81,7 +83,7 @@ def get_user_action():
             card1 = get_card(" with ".join(tokens[:index]))
             card2 = get_card(" with ".join(tokens[index:]))
             if card1 is not None and card2 is not None:
-                attack_card_with_card(card1, card2)
+                attack_card_with_card(card2, card1)
                 return
 
         print("That doesn't seem to be a proper use of the 'attack' command.")
@@ -90,6 +92,18 @@ def get_user_action():
     if user_input == "end":
         end_turn()
         return
+
+    if user_input == "field":
+        print("Creatures on the field:")
+        print_cards(field)
+        print("Unused items on the field:")
+        print_cards(unused_items_on_field)
+        return
+    if user_input == "discard":
+        print_cards(discarded_cards)
+        return
+    if user_input == "hand":
+        print_cards(p1_hand)
 
     if user_input == "quit":
         print("Thanks for playing!")
@@ -109,7 +123,16 @@ def attack_card_with_card(card1, card2):
 
 
 def get_card(card_name):
-    pass
+    """Searches your hand, the field, and the unused items on the field for the card and returns it. None otherwise"""
+    actual_card = next((card for card in p1_hand if card.title.lower() == card_name), None)
+
+    if actual_card is None:
+        actual_card = next((card for card in field if card.title.lower() == card_name), None)
+
+    if actual_card is None:
+        actual_card = next((card for card in unused_items_on_field if card.title.lower() == card_name), None)
+
+    return actual_card
 
 
 def help():
@@ -118,6 +141,9 @@ def help():
                 "play <card> on <card>": "Attempts to play the card on the other card.",
                 "attack <card> with <card>": "Attempts to have your card attack the other card.",
                 "end": "Ends your current turn. Play goes to the opposing player.",
+                "hand": "Prints the cards in your hand.",
+                "field": "Prints the cards on the field.",
+                "discard": "Prints the cards in the discard.",
                 "quit": "Quits the game."}
     print("Command list:")
     for command, description in commands.items():
@@ -126,14 +152,20 @@ def help():
 
 def play_card(card):
     """Puts a creature/armor/weapon into play"""
+    if card not in p1_hand:
+        print("You can only play cards from your hand to the field.")
+        return
+
     if len(field) >= 4:
         print("Only 4 creatures can be on the field at one time")
         return
 
     if isinstance(card, Creature):
         field.append(card)
+        p1_hand.remove(card)
     elif isinstance(card, Armor) or isinstance(card, Weapon):
         unused_items_on_field.append(card)
+        p1_hand.remove(card)
     else:
         print("Only creatures and items can be played directly to the field. Not upgrades.")
 
