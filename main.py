@@ -13,6 +13,10 @@ armor_cards = {}
 weapon_cards = {}
 upgrade_cards = {}
 
+field = []
+unused_items_on_field = []
+discarded_cards = []
+
 
 def run():
     p1_deck = make_deck()
@@ -25,6 +29,53 @@ def run():
     table.add_row(["Defence:"] + [card.defence for card in p1_hand])
     table.add_row(["Speed:"] + [card.speed for card in p1_hand])
     print(table.draw() + "\n")
+
+
+def play_card(card):
+    """Puts a creature/armor/weapon into play"""
+    if len(field) >= 4:
+        print("Only 4 creatures can be on the field at one time")
+        return
+
+    if isinstance(card, Creature):
+        field.append(card)
+    elif isinstance(card, Armor) or isinstance(card, Weapon):
+        unused_items_on_field.append(card)
+    else:
+        print("Only creatures and items can be played directly to the field. Not upgrades.")
+
+
+def play_card_on_card(base_card, addon_card):
+    """Attaches a card to another card"""
+    if base_card not in field or base_card not in unused_items_on_field:
+        print("Only cards on the field can be targeted.")
+        return
+
+    if isinstance(base_card, Creature):
+        if isinstance(addon_card, Creature):
+            # Evolving something I guess
+            pass
+
+        elif isinstance(addon_card, Armor):
+            # Equipping new armor
+            old_item = base_card.equip_armor(addon_card)
+            if old_item:
+                unused_items_on_field.append(old_item)
+
+        elif isinstance(addon_card, Weapon):
+            # Equipping a new weapon
+            old_item = base_card.equip_weapon(addon_card)
+            if old_item:
+                unused_items_on_field.append(old_item)
+
+        else:
+            print("Creatures can be upgraded only through evolution.")
+
+    if not isinstance(base_card, Upgrade) and isinstance(addon_card, Upgrade):
+        # Upgrading a piece of armor or a weapon
+        if isinstance(base_card, Armor) or isinstance(base_card, Weapon):
+            base_card.upgrade(addon_card)
+            discarded_cards.append(addon_card)
 
 
 def print_all_cards():
