@@ -17,6 +17,8 @@ class Creature:
 
     def equip_armor(self, new_armor):
         """Equips the new armor to this creature and adjusts any stat changes"""
+        if new_armor == self.armor:
+            return None
         old_armor = self.armor
         self.armor = new_armor
         self.adjust_stats()
@@ -24,6 +26,8 @@ class Creature:
 
     def equip_weapon(self, new_weapon):
         """Equips the new weapon to this creature and adjusts any stat changes"""
+        if new_weapon == self.weapon:
+            return None
         old_weapon = self.weapon
         self.weapon = new_weapon
         self.adjust_stats()
