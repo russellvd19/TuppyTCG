@@ -290,9 +290,14 @@ def import_data():
     """Loads all csv files of cards"""
     with open("data/creatures.csv", "r") as in_file:
         csv_reader = csv.DictReader(in_file, quoting=csv.QUOTE_NONNUMERIC)
+        unnamed_count = 0
         for row in csv_reader:
             # Creature(name, creature_type, energy, health, attack)
-            creature_cards[row["name"]] = Creature(row["name"], row["type"], row["energy"], row["health"], row["attack"])
+            name = row["name"]
+            if name is None or name == "":
+                name = "Creature{}".format(unnamed_count)
+                unnamed_count += 1
+            creature_cards[name] = Creature(name, row["type"], row["energy"], row["health"], row["attack"])
 
     with open("data/armors.csv", "r") as in_file:
         csv_reader = csv.DictReader(in_file, quoting=csv.QUOTE_NONNUMERIC)
