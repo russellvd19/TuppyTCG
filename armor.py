@@ -11,7 +11,7 @@ class Armor:
         self.upgrades = []
 
     def upgrade(self, upgrade_card):
-        """Upgrades the weapon"""
+        """Upgrades the armor"""
         self.upgrades.append(upgrade_card)
         self.title = "{}, {}".format(upgrade_card.title, self.title)
         self.adjust_stats()
