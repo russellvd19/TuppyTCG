@@ -4,8 +4,8 @@ from creature_type import CreatureType
 
 
 class Creature:
-    def __init__(self, title, creature_type, energy, health, attack):
-        self.title = title
+    def __init__(self, name, creature_type, energy, health, attack):
+        self.name = name
         self.creature_type = CreatureType(creature_type)
         self.energy = energy
         self.base_health = health
@@ -43,12 +43,12 @@ class Creature:
 
     def __repr__(self):
         return "({}) [{}] {}:\n\tHealth: {}\n\tAttack: {}\n\tDamage Negation: {}".format(self.__class__.__name__,
-                                                                                         self.creature_type, self.title,
+                                                                                         self.creature_type, self.name,
                                                                                          self.health,
                                                                                          self.attack,
                                                                                          self.damage_negation)
 
     def __bool__(self):
-        if self.title == "":
+        if self.name == "":
             return False
         return True
