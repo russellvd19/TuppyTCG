@@ -12,7 +12,7 @@ class Creature:
         self.base_attack = attack
         self.health = health
         self.attack = attack
-        self.weapon = Weapon("", 0, 0, 0)
+        self.weapon = Weapon("", 0, 0)
         self.armor = Armor("", 0, 0, 0)
         self.damage_negation = 0
 
@@ -37,7 +37,7 @@ class Creature:
     def adjust_stats(self):
         """Adds up the stats from weapon, armor, and all upgrades"""
         self.attack = self.base_attack + self.weapon.attack + self.armor.attack
-        self.damage_negation = self.armor.damage_negation
+        self.damage_negation = self.armor.damage_negation_per_combat
 
         self.attack = max(self.attack, 0)
 
