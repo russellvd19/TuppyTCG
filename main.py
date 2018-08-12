@@ -2,6 +2,7 @@ import csv
 import random
 from copy import deepcopy
 import time
+from ast import literal_eval
 
 import texttable
 from creature import Creature
@@ -290,22 +291,26 @@ def import_data():
     with open("data/creatures.csv", "r") as in_file:
         csv_reader = csv.DictReader(in_file, quoting=csv.QUOTE_NONNUMERIC)
         for row in csv_reader:
-            creature_cards[row["title"]] = Creature(row["title"], row["attack"], row["defence"], row["speed"])
+            # Creature(title, creature_type, energy, health, attack)
+            creature_cards[row["title"]] = Creature(row["name"], row["type"], row["energy"], row["health"], row["attack"])
 
     with open("data/armors.csv", "r") as in_file:
         csv_reader = csv.DictReader(in_file, quoting=csv.QUOTE_NONNUMERIC)
         for row in csv_reader:
-            armor_cards[row["title"]] = Armor(row["title"], row["attack"], row["defence"], row["speed"])
+            # Armor(title, attack, damage_negation_per_combat, max_damage_negation)
+            armor_cards[row["title"]] = Armor(row["name"], row["attack"], row["damage_negation_per_combat"], row["max_damage_negation"])
 
     with open("data/weapons.csv", "r") as in_file:
         csv_reader = csv.DictReader(in_file, quoting=csv.QUOTE_NONNUMERIC)
         for row in csv_reader:
-            weapon_cards[row["title"]] = Weapon(row["title"], row["attack"], row["defence"], row["speed"])
+            # Weapon(title, attack, max_uses)
+            weapon_cards[row["title"]] = Weapon(row["name"], row["attack"], row["max_uses"])
 
     with open("data/upgrades.csv", "r") as in_file:
         csv_reader = csv.DictReader(in_file, quoting=csv.QUOTE_NONNUMERIC)
         for row in csv_reader:
-            upgrade_cards[row["title"]] = Upgrade(row["title"], row["attack"], row["defence"], row["speed"])
+            # Upgrade(title, upgrades)
+            upgrade_cards[row["title"]] = Upgrade(row["name"], literal_eval(row["upgrades"]))
 
 
 if __name__ == "__main__":
