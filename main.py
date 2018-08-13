@@ -10,6 +10,7 @@ upgrade_cards = {}
 
 player_one = Player("Player 1")
 player_two = Player("Player 2")
+player_resigned = None
 
 
 def run():
@@ -55,7 +56,7 @@ def start_game(p1, p2):
         print("{}'s turn.".format(first_player))
         first_player.start_turn()
         action = first_player.get_action()
-        while action is not None:
+        while action.get("action", "end") is not "end":
             do_action(first_player, action)
             if is_game_over():
                 game_over = True
@@ -67,7 +68,7 @@ def start_game(p1, p2):
         print("{}'s turn.".format(second_player))
         second_player.start_turn()
         action = second_player.get_action()
-        while action is not None:
+        while action.get("action", "end") is not "end":
             do_action(second_player, action)
             if is_game_over():
                 game_over = True
@@ -84,11 +85,35 @@ def end_game(winner, loser):
 
 def do_action(player, action):
     """Performs an action for a player. Will get moved to web service?"""
-    pass
+
+    if action["action"] == "bad_input" or action["action"] == "local_print":
+        return
+
+    if action["action"] == "play_card":
+        play_card(player, action["card"])
+
+    elif action["action"] == "play_card_on_card":
+        play_card_on_card(player, action["base"], action["addon"])
+
+    elif action["action"] == "attack_card_with_card":
+        attack_card_with_card(player, action["attacker"], action["defender"])
+
+    elif action["action"] == "draw":
+        player.draw_cards(amount=action["amount"])
+
+    elif action["action"] == "quit":
+        global player_resigned
+        player_resigned = player
+        print("{} has decided to quit.".format(player))
+    else:
+        print("'{}' doesn't exist as an action.".format(action["action"]))
 
 
 def is_game_over():
     """Checks if the game is over yet."""
+    if player_resigned is not None:
+        return True
+
     if player_one.shards > 10 or player_two.shards > 10:
         return True
     return False
@@ -100,6 +125,11 @@ def get_winner():
         print("Game isn't over yet.")
         return None
 
+    if player_resigned is not None:
+        if player_resigned == player_one:
+            return player_one
+        return player_two
+
     if player_one.shards > player_two.shards:
         return player_one
     elif player_one.shards < player_two.shards:
@@ -109,8 +139,12 @@ def get_winner():
         return random.choice([player_one, player_two])
 
 
-def attack_card_with_card(my_card, their_card):
+def attack_card_with_card(player, my_card, their_card):
     """Completes combat between the two cards. 'my_card' is the one attacking."""
+    if my_card.controller != player or their_card.controller == player:
+        print("Uhh, you can only attack their creatures with your creatures.")
+        return
+
     my_damage = my_card.attack
     if my_card.creature_type > their_card.creature_type:
         my_damage *= 1.2
