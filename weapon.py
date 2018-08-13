@@ -29,7 +29,7 @@ class Weapon(Card):
         return False
 
     def __repr__(self):
-        return "({}) {}:\n  Attack: {}\n  Uses left: {} / {}".format(self.__class__.__name__, self.name, self.attack,
+        return "({})\n{}:\n  Attack: {}\n  Uses left: {} / {}".format(self.__class__.__name__, self.name, self.attack,
                                                                      self.max_uses - self.uses, self.max_uses)
 
     def __bool__(self):

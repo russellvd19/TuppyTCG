@@ -269,5 +269,4 @@ def play_card_on_card(player, base_card, addon_card):
 
 if __name__ == "__main__":
     creature_cards, armor_cards, weapon_cards, upgrade_cards = import_data()
-    print_all_cards(creature_cards, armor_cards, weapon_cards, upgrade_cards)
     run()

@@ -19,7 +19,7 @@ class Upgrade(Card):
 
     def __repr__(self):
         all_upgrades = ["\n  {}: {}{}".format(k, "+" if v > 0 else "", v) for k, v in self.upgrades.items()]
-        return "({}) {}:{}".format(self.__class__.__name__, self.name, "".join(all_upgrades))
+        return "({})\n{}:{}".format(self.__class__.__name__, self.name, "".join(all_upgrades))
 
     def __bool__(self):
         if self.name == "":

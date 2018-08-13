@@ -40,7 +40,7 @@ class Armor(Card):
         return False
 
     def __repr__(self):
-        return "({}) {}:\n  Attack: {}\n  Damage Negation: {}/combat\n  Durability: {} / {}".format(
+        return "({})\n{}:\n  Attack: {}\n  Damage Negation: {}/combat\n  Durability: {} / {}".format(
             self.__class__.__name__, self.name, self.attack, self.damage_negation_per_combat, self.damage_negated,
             self.max_damage_negation)
 

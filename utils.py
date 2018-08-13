@@ -25,7 +25,7 @@ def print_all_cards(creature_cards, armor_cards, weapon_cards, upgrade_cards):
 
 def print_cards(card_list):
     """Prints all of the cards given into a texttable"""
-    table = texttable.Texttable()
+    table = texttable.Texttable(max_width=0)
     table.add_row([repr(card) for card in card_list])
     print(table.draw() + "\n")
 

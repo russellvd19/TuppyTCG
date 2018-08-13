@@ -81,7 +81,7 @@ class Creature(Card):
         return self.energy, self.energy * 5
 
     def __repr__(self):
-        return "({}) [{}] {}:\n  Health: {}\n  Attack: {}\n  Damage Negation: {}".format(self.__class__.__name__,
+        return "({}) [{}]\n{}:\n  Health: {}\n  Attack: {}\n  Damage Negation: {}".format(self.__class__.__name__,
                                                                                          self.creature_type, self.name,
                                                                                          self.health,
                                                                                          self.attack,
