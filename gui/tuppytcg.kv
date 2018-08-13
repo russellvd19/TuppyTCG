@@ -1,0 +1,97 @@
+#:kivy 1.10.1
+
+<TuppyTCGGame>:
+
+<Card>:
+    size: 175, 275
+    card_border: border_id
+    card_type: type_id
+    card_energy: energy_id
+    card_health: health_id
+    card_name: name_id
+    card_image: image_id
+    card_attack: attack_id
+    card_damage: damage_id
+
+    Widget:
+        id: border_id
+        canvas:
+            Color:
+                rgba: .1, .1, 1, .9
+            Line:
+                width: 2.
+                rectangle: (0, 0, self.width, self.height)
+
+    Label:
+        id: energy_id
+        font_size: 14
+        text: "2"
+        text_size: self.size
+        halign: "left"
+        pos: 15, root.height - 30
+
+    Label:
+        id: type_id
+        font_size: 14
+        text: "TypeA"
+        text_size: self.size
+        halign: "left"
+        pos: 30, root.height - 30
+
+
+    Label:
+        id: health_id
+        font_size: 14
+        text: "<3: 100"
+        text_size: self.size
+        halign: "right"
+        pos: root.width - 15 - self.width, root.height - 30
+
+    Label:
+        id: name_id
+        font_size: 18
+        text: "Creature Name"
+        text_size: self.size
+        pos: 15, root.height - 60
+
+    Widget:
+        id: image_id
+        canvas:
+            Color:
+                rgba: .1, .1, 1, .9
+            Line:
+                width: 1.5
+                rectangle: (15, 90, self.parent.width - 30, self.parent.height - 30 - 75 - 60)
+
+    Label:
+        font_size: 14
+        text: "Creature Image"
+        text_size: self.size
+        halign: "center"
+        valign: "center"
+        pos: 0, 0
+
+    Label:
+        font_size: 14
+        text: "Attack:"
+        text_size: self.size
+        pos: 15, 60
+    Label:
+        id: attack_id
+        font_size: 14
+        text: "+2"
+        text_size: self.size
+        halign: "right"
+        pos: root.width - 15 - self.width, 60
+    Label:
+        font_size: 14
+        text: "Damage\nnegation:"
+        text_size: self.size
+        pos: 15, 15
+    Label:
+        id: damage_id
+        font_size: 14
+        text: "30 remaining\n5/combat"
+        text_size: self.size
+        halign: "right"
+        pos: root.width - 15 - self.width, 15
