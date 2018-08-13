@@ -24,7 +24,7 @@ class Card(RelativeLayout):
         super(Card, self).__init__(**kwargs)
         self.card_type.text = repr(card.creature_type)
         self.card_energy.text = str(int(card.energy))
-        self.card_health.text = str(int(card.base_health))
+        self.card_health.text = "<3: {}".format(int(card.base_health))
         self.card_name.text = card.name
 
         self.card_attack.text = str(int(card.base_attack))
