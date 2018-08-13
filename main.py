@@ -109,8 +109,6 @@ def get_winner():
         return random.choice([player_one, player_two])
 
 
-
-
 def attack_card_with_card(my_card, their_card):
     """Completes combat between the two cards. 'my_card' is the one attacking."""
     my_damage = my_card.attack
@@ -122,8 +120,10 @@ def attack_card_with_card(my_card, their_card):
         their_damage *= 1.2
     their_damage = their_damage // 2  # Native bonus for attackers
 
-    their_card.take_damage(my_damage)
-    my_card.take_damage(their_damage)
+    damage = their_card.take_damage(my_damage)
+    print("{} took {} damage.".format(their_card.name, damage))
+    damage = my_card.take_damage(their_damage)
+    print("{} took {} damage.".format(my_card.name, damage))
 
     # Get all cards that may have broken, worn off, or died
     my_cards_to_discard, my_cards_to_unused = my_card.completed_attack()

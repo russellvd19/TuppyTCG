@@ -28,11 +28,16 @@ class Armor(Card):
         self.max_damage_negation = self.base_max_damage_negation + sum(
             [upgrade.max_damage_negation for upgrade in self.upgrades])
 
-    def amount_negated(self, damage):
-        return min(self.damage_negation_per_combat, self.max_damage_negation - self.damage_negated, damage)
+    def negate_damage(self, damage):
+        """Negates some damage. Returns the amount negated"""
+        amount_negated = min(self.damage_negation_per_combat, self.max_damage_negation - self.damage_negated, damage)
+        self.damage_negated += amount_negated
+        return amount_negated
 
     def is_destroyed(self):
-        return self.damage_negated >= self.max_damage_negation
+        if self:
+            return self.damage_negated >= self.max_damage_negation
+        return False
 
     def __repr__(self):
         return "({}) {}:\n  Attack: {}\n  Damage Negation: {}/combat\n  Durability: {} / {}".format(

@@ -44,16 +44,41 @@ class Creature(Card):
         self.attack = max(self.attack, 0)
 
     def is_dead(self):
-        pass
+        """Checks if this creature is dead"""
+        return self.health <= 0
 
     def take_damage(self, amount):
-        pass
+        """Takes an amount of damage, decreased if there is appropriate armor"""
+        if self.armor:
+            amount = max(amount - self.armor.negate_damage(amount), 0)
+        self.health -= amount
+        return amount
 
     def completed_attack(self):
-        pass
+        """Returns all cards that have to be discarded and sent to unused"""
+        to_discard = []
+        to_unused = []
+
+        if self.armor.is_destroyed():
+            to_discard.append(self.armor)
+            self.armor = Armor("", 0, 0, 0)
+
+        if self.weapon.is_destroyed():
+            to_discard.append(self.weapon)
+            self.weapon = Weapon("", 0, 0)
+
+        if self.is_dead():
+            to_discard.append(self)
+            if self.armor:
+                to_unused.append(self.armor)
+            if self.weapon:
+                to_unused.append(self.weapon)
+
+        return to_discard, to_unused
 
     def value(self):
-        pass
+        """Returns the shards and xp values of this creature"""
+        return self.energy, self.energy * 5
 
     def __repr__(self):
         return "({}) [{}] {}:\n  Health: {}\n  Attack: {}\n  Damage Negation: {}".format(self.__class__.__name__,

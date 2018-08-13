@@ -24,7 +24,9 @@ class Weapon(Card):
         self.max_uses = self.base_max_uses + sum([upgrade.max_uses for upgrade in self.upgrades])
 
     def is_destroyed(self):
-        return self.uses >= self.max_uses
+        if self:
+            return self.uses >= self.max_uses
+        return False
 
     def __repr__(self):
         return "({}) {}:\n  Attack: {}\n  Uses left: {} / {}".format(self.__class__.__name__, self.name, self.attack,
