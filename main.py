@@ -140,6 +140,51 @@ def draw_card():
 
 
 def attack_card_with_card(my_card, their_card):
+    """Completes combat between the two cards. 'my_card' is the one attacking."""
+    my_damage = my_card.attack
+    if my_card.creature_type > their_card.creature_type:
+        my_damage *= 1.2
+
+    their_damage = their_card.attack
+    if their_card.creature_type > my_card.creature_type:
+        their_damage *= 1.2
+    their_damage = their_damage // 2  # Native bonus for attackers
+
+    their_card.take_damage(my_damage)
+    my_card.take_damage(their_damage)
+
+    # Get all cards that may have broken, worn off, or died
+    my_cards_to_discard, my_cards_to_unused = my_card.completed_attack()
+    their_cards_to_discard, their_cards_to_unused = their_card.completed_attack()
+
+    for to_discard, to_unused in [(my_cards_to_discard, my_cards_to_unused),
+                                  (their_cards_to_discard, their_cards_to_unused)]:
+        # Remove any cards on field to the discard
+        for card in to_discard:
+            card.controller.field.remove(card)
+            card.controller.discarded_cards.append(card)
+
+        # Remove any cards on field to the unused items pile
+        for card in to_unused:
+            card.controller.field.remove(card)
+            card.controller.unused_items_on_field.append(card)
+
+    if their_card.is_dead():
+        shards, xp = their_card.value()
+        my_card.controller.shards += shards
+        my_card.controller.xp[my_card.name] += xp
+
+    if my_card.is_dead():
+        shards, xp = my_card.value()
+        their_card.controller.shards += shards
+        their_card.controller.xp[their_card.name] += xp
+
+
+def attack_with(my_card):
+    pass
+
+
+def cancel_attack(my_card):
     pass
 
 
@@ -223,7 +268,6 @@ def play_card_on_card(base_card, addon_card):
         if isinstance(base_card, Armor) or isinstance(base_card, Weapon):
             base_card.upgrade(addon_card)
             discarded_cards.append(addon_card)
-
 
 
 if __name__ == "__main__":

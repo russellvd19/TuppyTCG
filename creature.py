@@ -41,6 +41,18 @@ class Creature:
 
         self.attack = max(self.attack, 0)
 
+    def is_dead(self):
+        pass
+
+    def take_damage(self, amount):
+        pass
+
+    def completed_attack(self):
+        pass
+
+    def value(self):
+        pass
+
     def __repr__(self):
         return "({}) [{}] {}:\n\tHealth: {}\n\tAttack: {}\n\tDamage Negation: {}".format(self.__class__.__name__,
                                                                                          self.creature_type, self.name,

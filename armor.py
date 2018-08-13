@@ -25,7 +25,7 @@ class Armor:
             [upgrade.max_damage_negation for upgrade in self.upgrades])
 
     def amount_negated(self, damage):
-        return min(self.damage_negation_per_combat, self.max_damage_negation - self.damage_negated)
+        return min(self.damage_negation_per_combat, self.max_damage_negation - self.damage_negated, damage)
 
     def is_destroyed(self):
         return self.damage_negated >= self.max_damage_negation
