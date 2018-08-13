@@ -122,3 +122,7 @@ class Player():
 
     def __repr__(self):
         return self.name
+
+def help():
+    from main import help as main_help
+    main_help()
