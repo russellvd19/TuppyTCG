@@ -1,5 +1,22 @@
-"name","attack","max_uses"
-"Toothpick",2,5
-"Hot Sauce Guns",3,4
-"Big Knife",5,3
-"Plastic Fork",1,10
+weapon,attack,max_uses,weapon_type,
+“Slingshot”,10,5,6,
+“Stick”,5,3,6,
+“Sword”,20,10,6,
+“Nail”,15,10,6,
+“Bottle”,10,5,6,
+“Axe”,20,10,6,
+“Chainsaw”,30,2,6,
+“Rock”,15,1,6,
+“Club”,10,10,6,
+“Mace”,20,10,6,
+“Staff”,10,10,6,
+“Hammer”,20,20,6,
+“Cleaver”,20,10,6,
+“Taser”,60,1,6,
+“Water Gun”,5,15,3,
+“Torch”,10,1,2,
+“Vine Whip”,25,20,4,
+“Lasso”,5,2,6,
+“Dagger”,10,10,6,
+“Bow”,15,5,6,
+,,,,
