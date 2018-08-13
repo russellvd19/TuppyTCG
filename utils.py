@@ -13,12 +13,13 @@ from upgrade import Upgrade
 
 def print_all_cards(creature_cards, armor_cards, weapon_cards, upgrade_cards):
     """Prints all of the cards currently existing"""
-    for title, deck in [("Creature cards", creature_cards), ("\nArmor cards", armor_cards),
-                        ("\nWeapon cards", weapon_cards), ("\nUpgrade cards", upgrade_cards)]:
-        print(title)
+    for deck_title, deck in [("Creature cards", creature_cards), ("\nArmor cards", armor_cards),
+                             ("\nWeapon cards", weapon_cards), ("\nUpgrade cards", upgrade_cards)]:
+
+        print(deck_title)
         card_list = list(deck.values())
         card_list.sort(key=lambda x: x.name)
-        for index in range(int(ceil(len(card_list) // 5))):
+        for index in range(int(ceil(len(card_list) / 5))):
             print_cards(card_list[index * 5:(index + 1) * 5])
 
 

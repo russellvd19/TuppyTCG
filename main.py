@@ -133,7 +133,7 @@ def draw_card():
         quit()
 
     new_card = p1_deck[0]
-    print("You drew a '{}'".format(new_card.title))
+    print("You drew a '{}'".format(new_card.name))
     p1_hand.append(new_card)
     p1_deck = p1_deck[1:]
     print_cards(p1_hand)
@@ -190,13 +190,13 @@ def cancel_attack(my_card):
 
 def get_card(card_name):
     """Searches your hand, the field, and the unused items on the field for the card and returns it. None otherwise"""
-    actual_card = next((card for card in p1_hand if card.title.lower() == card_name), None)
+    actual_card = next((card for card in p1_hand if card.name.lower() == card_name), None)
 
     if actual_card is None:
-        actual_card = next((card for card in field if card.title.lower() == card_name), None)
+        actual_card = next((card for card in field if card.name.lower() == card_name), None)
 
     if actual_card is None:
-        actual_card = next((card for card in unused_items_on_field if card.title.lower() == card_name), None)
+        actual_card = next((card for card in unused_items_on_field if card.name.lower() == card_name), None)
 
     return actual_card
 
@@ -272,4 +272,5 @@ def play_card_on_card(base_card, addon_card):
 
 if __name__ == "__main__":
     creature_cards, armor_cards, weapon_cards, upgrade_cards = import_data()
+    print_all_cards(creature_cards, armor_cards, weapon_cards, upgrade_cards)
     run()

@@ -11,7 +11,7 @@ class Weapon:
     def upgrade(self, upgrade_card):
         """Upgrades the weapon"""
         self.upgrades.append(upgrade_card)
-        self.name = "{}, {}".format(upgrade_card.title, self.name)
+        self.name = "{}, {}".format(upgrade_card.name, self.name)
         self.adjust_stats()
 
     def adjust_stats(self):
@@ -23,7 +23,7 @@ class Weapon:
         return self.uses >= self.max_uses
 
     def __repr__(self):
-        return "({}) {}:\n\tAttack: {}\n\tUses left: {} / {}".format(self.__class__.__name__, self.name, self.attack,
+        return "({}) {}:\n  Attack: {}\n  Uses left: {} / {}".format(self.__class__.__name__, self.name, self.attack,
                                                                      self.max_uses - self.uses, self.max_uses)
 
     def __bool__(self):

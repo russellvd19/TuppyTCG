@@ -54,7 +54,7 @@ class Creature:
         pass
 
     def __repr__(self):
-        return "({}) [{}] {}:\n\tHealth: {}\n\tAttack: {}\n\tDamage Negation: {}".format(self.__class__.__name__,
+        return "({}) [{}] {}:\n  Health: {}\n  Attack: {}\n  Damage Negation: {}".format(self.__class__.__name__,
                                                                                          self.creature_type, self.name,
                                                                                          self.health,
                                                                                          self.attack,
