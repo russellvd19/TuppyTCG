@@ -74,6 +74,8 @@ def import_data():
         csv_reader = csv.DictReader(in_file, quoting=csv.QUOTE_NONNUMERIC)
         for row in csv_reader:
             # Armor(name, attack, damage_negation_per_combat, max_damage_negation)
+            if row["name"] is None or row["name"] == "":
+                continue
             armor_cards[row["name"]] = Armor(row["name"], row["attack"], row["damage_negation_per_combat"],
                                              row["max_damage_negation"])
 
@@ -82,6 +84,8 @@ def import_data():
         csv_reader = csv.DictReader(in_file, quoting=csv.QUOTE_NONNUMERIC)
         for row in csv_reader:
             # Weapon(name, attack, max_uses)
+            if row["name"] is None or row["name"] == "":
+                continue
             weapon_cards[row["name"]] = Weapon(row["name"], row["attack"], row["max_uses"])
 
     upgrade_cards = {}
@@ -89,6 +93,8 @@ def import_data():
         csv_reader = csv.DictReader(in_file, quoting=csv.QUOTE_NONNUMERIC)
         for row in csv_reader:
             # Upgrade(name, upgrades)
+            if row["name"] is None or row["name"] == "":
+                continue
             upgrade_cards[row["name"]] = Upgrade(row["name"], literal_eval(row["upgrades"]))
 
     return creature_cards, armor_cards, weapon_cards, upgrade_cards
