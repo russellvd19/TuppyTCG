@@ -1,4 +1,4 @@
-"title","upgrades"
+"name","upgrades"
 "Mustard","{'attack': 1, 'max_damage_negation': 10}"
 "Mayo","{'attack': 3, 'max_uses': 3}"
 "Bacon","{'attack': 5}"
