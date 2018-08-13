@@ -1,5 +1,9 @@
-class Armor:
+from card import Card
+
+
+class Armor(Card):
     def __init__(self, name, attack, damage_negation_per_combat, max_damage_negation):
+        super().__init__()
         self.name = name
         self.base_attack = attack
         self.base_damage_negation_per_combat = damage_negation_per_combat

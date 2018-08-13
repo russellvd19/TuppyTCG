@@ -1,5 +1,9 @@
-class Weapon:
+from card import Card
+
+
+class Weapon(Card):
     def __init__(self, name, attack, max_uses):
+        super().__init__()
         self.name = name
         self.base_attack = attack
         self.base_max_uses = max_uses

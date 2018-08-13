@@ -1,10 +1,12 @@
+from card import Card
 from armor import Armor
 from weapon import Weapon
 from creature_type import CreatureType
 
 
-class Creature:
+class Creature(Card):
     def __init__(self, name, creature_type, energy, health, attack):
+        super().__init__()
         self.name = name
         self.creature_type = CreatureType(creature_type)
         self.energy = energy

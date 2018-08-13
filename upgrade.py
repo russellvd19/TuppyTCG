@@ -1,9 +1,14 @@
-class Upgrade:
+from card import Card
+
+
+class Upgrade(Card):
     def __init__(self, name, upgrades):
+        super().__init__()
         self.name = name
         self.upgrades = upgrades
 
     def __getattr__(self, item):
+        # For when upgrades doesn't exist yet. Otherwise infinite recursion b/c next if statement
         if item == "upgrades":
             raise AttributeError
 

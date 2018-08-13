@@ -1,5 +1,6 @@
 import time
 
+from player import Player
 from utils import *
 
 creature_cards = {}
@@ -7,136 +8,107 @@ armor_cards = {}
 weapon_cards = {}
 upgrade_cards = {}
 
-field = []
-unused_items_on_field = []
-discarded_cards = []
-p1_deck = []
-p1_hand = []
+player_one = Player("Player 1")
+player_two = Player("Player 2")
 
 
 def run():
-    global p1_hand
-    global p1_deck
-    p1_deck = make_deck(creature_cards, armor_cards, weapon_cards, upgrade_cards)
-    p1_hand = p1_deck[:5]
-    print("Player 1's Hand")
-    print_cards(p1_hand)
+    # Create a deck for each player
+    for player in [player_one, player_two]:
+        new_deck = make_deck(creature_cards, armor_cards, weapon_cards, upgrade_cards)
+        for card in new_deck:
+            card.controller = player
+        player.deck = new_deck
+        player.draw_cards(amount=5)
+        print("{}'s Hand".format(player.name))
+        print_cards(player.hand)
 
-    while Creature not in [type(card) for card in p1_hand]:
-        print("You're hand didn't have a creature. Redrawing...")
-        random.shuffle(p1_deck)
-        p1_hand = p1_deck[:5]
-        print_cards(p1_hand)
+    start_game(player_one, player_two)
 
-    p1_deck = p1_deck[5:]
-
-    start_turn()
-    while True:
-        get_user_action()
-
-
-def get_user_action():
-    user_input = input("What would you like to do? ")
-
-    user_input = user_input.lower().strip()
-
-    if user_input == "help":
-        help()
-        return
-
-    if user_input.startswith("play "):
-        user_input = user_input[5:].strip()
-        if user_input.count(" on ") == 0:
-            actual_card = get_card(user_input)
-            if actual_card is not None:
-                play_card(actual_card)
-            else:
-                print("'{}' isn't a card you've got.".format(user_input))
+    # Game is over now I guess
+    winner = get_winner()
+    if winner:
+        print("Hey! {} won! Good job!".format(winner.name))
+        if winner == player_one:
+            loser = player_two
         else:
-            tokens = user_input.split(" on ")
-            for index in range(1, len(tokens)):
-                addon = get_card(" on ".join(tokens[:index]))
-                base = get_card(" on ".join(tokens[index:]))
-                if addon is not None and base is not None:
-                    play_card_on_card(base, addon)
-                    break
-            else:
-                print("You have to list two valid cards to play them both.")
+            loser = player_one
 
-        return
-
-    if user_input.startswith("attack "):
-        user_input = user_input[7:].strip()
-        tokens = user_input.split(" with ")
-        for index in range(1, len(tokens)):
-            card1 = get_card(" with ".join(tokens[:index]))
-            card2 = get_card(" with ".join(tokens[index:]))
-            if card1 is not None and card2 is not None:
-                attack_card_with_card(card2, card1)
-                return
-
-        print("That doesn't seem to be a proper use of the 'attack' command.")
-        return
-
-    if user_input == "end":
-        end_turn()
-        wait_for_turn()
-        start_turn()
-        return
-
-    if user_input == "field":
-        print("Creatures on the field:")
-        print_cards(field)
-        print("Unused items on the field:")
-        print_cards(unused_items_on_field)
-        return
-    if user_input == "discard":
-        print_cards(discarded_cards)
-        return
-    if user_input == "hand":
-        print_cards(p1_hand)
-        return
-
-    if user_input == "draw":
-        draw_card()
-        return
-
-    if user_input == "quit":
-        print("Thanks for playing!")
-        time.sleep(1)
-        quit()
-
-    print("What you entered doesn't seem to be valid. Here's some help.")
-    help()
+        end_game(winner, loser)
+    else:
+        print("IDK what happened, but apparently nobody won")
 
 
-def end_turn():
-    print("Your turn is done. Wait for the opponent to go.")
+def start_game(p1, p2):
+    # Flip a coin to see who goes first
+    if random.choice([True, False]):
+        first_player = p1
+        second_player = p2
+    else:
+        first_player = p2
+        second_player = p1
+
+    print("{} is going first.".format(first_player))
+
+    game_over = False
+    while not game_over:
+        print("{}'s turn.".format(first_player))
+        first_player.start_turn()
+        action = first_player.get_action()
+        while action is not None:
+            do_action(first_player, action)
+            if is_game_over():
+                game_over = True
+                break
+            action = first_player.get_action()
+        first_player.end_turn()
+        first_player.wait_for_turn()
+
+        print("{}'s turn.".format(second_player))
+        second_player.start_turn()
+        action = second_player.get_action()
+        while action is not None:
+            do_action(second_player, action)
+            if is_game_over():
+                game_over = True
+                break
+            action = second_player.get_action()
+        first_player.end_turn()
+        first_player.wait_for_turn()
 
 
-def wait_for_turn():
-    time.sleep(3)
-    print("Opponent has finished their turn.")
+def end_game(winner, loser):
+    """Gives each player all the experience they earned and resets stuff probably"""
+    pass
 
 
-def start_turn():
-    print("It's your turn.")
-    draw_card()
+def do_action(player, action):
+    """Performs an action for a player. Will get moved to web service?"""
+    pass
 
 
-def draw_card():
-    global p1_deck
-    global p1_hand
-    if len(p1_deck) <= 0:
-        print("You ran out of cards. Game over for you. Bye now.")
-        time.sleep(3)
-        quit()
+def is_game_over():
+    """Checks if the game is over yet."""
+    if player_one.shards > 10 or player_two.shards > 10:
+        return True
+    return False
 
-    new_card = p1_deck[0]
-    print("You drew a '{}'".format(new_card.name))
-    p1_hand.append(new_card)
-    p1_deck = p1_deck[1:]
-    print_cards(p1_hand)
+
+def get_winner():
+    """Returns the winning player of the current game"""
+    if not is_game_over():
+        print("Game isn't over yet.")
+        return None
+
+    if player_one.shards > player_two.shards:
+        return player_one
+    elif player_one.shards < player_two.shards:
+        return player_two
+    else:
+        # Tiebreaker; choose a random winner for now
+        return random.choice([player_one, player_two])
+
+
 
 
 def attack_card_with_card(my_card, their_card):
@@ -188,19 +160,6 @@ def cancel_attack(my_card):
     pass
 
 
-def get_card(card_name):
-    """Searches your hand, the field, and the unused items on the field for the card and returns it. None otherwise"""
-    actual_card = next((card for card in p1_hand if card.name.lower() == card_name), None)
-
-    if actual_card is None:
-        actual_card = next((card for card in field if card.name.lower() == card_name), None)
-
-    if actual_card is None:
-        actual_card = next((card for card in unused_items_on_field if card.name.lower() == card_name), None)
-
-    return actual_card
-
-
 def help():
     commands = {"help": "Prints this message.",
                 "play <card>": "Puts the specified card on the field.",
@@ -217,29 +176,33 @@ def help():
         print("'{}' :- {}".format(command, description))
 
 
-def play_card(card):
+def play_card(player, card):
     """Puts a creature/armor/weapon into play"""
-    if card not in p1_hand:
+    if card not in player.hand:
         print("You can only play cards from your hand to the field.")
         return
 
-    if len(field) >= 4:
+    if len(player.field) >= 4:
         print("Only 4 creatures can be on the field at one time")
         return
 
     if isinstance(card, Creature):
-        field.append(card)
-        p1_hand.remove(card)
+        player.field.append(card)
+        player.hand.remove(card)
     elif isinstance(card, Armor) or isinstance(card, Weapon):
-        unused_items_on_field.append(card)
-        p1_hand.remove(card)
+        player.unused_items_on_field.append(card)
+        player.hand.remove(card)
     else:
         print("Only creatures and items can be played directly to the field. Not upgrades.")
 
 
-def play_card_on_card(base_card, addon_card):
+def play_card_on_card(player, base_card, addon_card):
     """Attaches a card to another card"""
-    if base_card not in field and base_card not in unused_items_on_field:
+    if not (player == base_card.controller == addon_card.controller):
+        print("You can only play cards on your own creature.")
+        return
+
+    if base_card not in player.field and base_card not in player.unused_items_on_field:
         print("Only cards on the field can be targeted.")
         return
 
@@ -252,13 +215,13 @@ def play_card_on_card(base_card, addon_card):
             # Equipping new armor
             old_item = base_card.equip_armor(addon_card)
             if old_item:
-                unused_items_on_field.append(old_item)
+                player.unused_items_on_field.append(old_item)
 
         elif isinstance(addon_card, Weapon):
             # Equipping a new weapon
             old_item = base_card.equip_weapon(addon_card)
             if old_item:
-                unused_items_on_field.append(old_item)
+                player.unused_items_on_field.append(old_item)
 
         else:
             print("Creatures can be upgraded only through evolution.")
@@ -267,7 +230,7 @@ def play_card_on_card(base_card, addon_card):
         # Upgrading a piece of armor or a weapon
         if isinstance(base_card, Armor) or isinstance(base_card, Weapon):
             base_card.upgrade(addon_card)
-            discarded_cards.append(addon_card)
+            player.discarded_cards.append(addon_card)
 
 
 if __name__ == "__main__":
