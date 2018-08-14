@@ -4,7 +4,6 @@
 
 <Card>:
     size: 175, 275
-    card_border: border_id
     card_type: type_id
     card_energy: energy_id
     card_health: health_id
@@ -13,14 +12,19 @@
     card_attack: attack_id
     card_damage: damage_id
 
-    Widget:
-        id: border_id
-        canvas:
-            Color:
-                rgba: .1, .1, 1, .9
-            Line:
-                width: 2.
-                rectangle: (0, 0, self.width, self.height)
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, .5
+        Rectangle:
+            pos: 0, 0
+            size: self.size
+
+    canvas:
+        Color:
+            rgba: self.border_color
+        Line:
+            width: 2.
+            rectangle: (0, 0, self.width, self.height)
 
     Label:
         id: energy_id
@@ -56,6 +60,12 @@
 
     Widget:
         id: image_id
+        canvas.before:
+            Color:
+                rgba: .1, .1, .1, .5
+            Rectangle:
+                pos: 15, 90
+                size: self.parent.width - 30, self.parent.height - 30 - 75 - 60
         canvas:
             Color:
                 rgba: .1, .1, 1, .9

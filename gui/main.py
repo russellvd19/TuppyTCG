@@ -3,15 +3,18 @@ from kivy.uix.widget import Widget
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.properties import ObjectProperty
+from kivy.properties import ListProperty
+from kivy.graphics import Color
 
 from kivy.config import Config
+
 Config.set('graphics', 'width', '965')
 Config.set('graphics', 'height', '305')
 from utils import import_data
 import random
 
+
 class Card(RelativeLayout):
-    card_border = ObjectProperty(None)
     card_type = ObjectProperty(None)
     card_energy = ObjectProperty(None)
     card_health = ObjectProperty(None)
@@ -19,9 +22,14 @@ class Card(RelativeLayout):
     card_image = ObjectProperty(None)
     card_attack = ObjectProperty(None)
     card_damage = ObjectProperty(None)
+    border_color = ListProperty([.1, .1, 1, .9])
+
+    card_selected = None
+    something_selected = False
 
     def __init__(self, card, **kwargs):
         super(Card, self).__init__(**kwargs)
+        self.card = card
         self.card_type.text = repr(card.creature_type)
         self.card_energy.text = str(int(card.energy))
         self.card_health.text = "<3: {}".format(int(card.base_health))
@@ -29,6 +37,27 @@ class Card(RelativeLayout):
 
         self.card_attack.text = str(int(card.base_attack))
         self.card_damage.text = str(int(card.damage_negation))
+
+    def on_touch_down(self, touch):
+        if self.collide_point(*touch.pos):
+            Card.something_selected = True
+            if Card.card_selected is not None:
+                Card.card_selected.unselect()
+            if Card.card_selected == self:
+                Card.card_selected = None
+            else:
+                Card.card_selected = self
+                self.select()
+                return True
+        return False
+
+    def unselect(self):
+        self.border_color = [.1, .1, 1, .9]
+        print("{} unselected".format(self.card.name))
+
+    def select(self):
+        self.border_color = [1, .1, .1, .9]
+        print("{} selected".format(self.card.name))
 
 
 class TuppyTCGGame(FloatLayout):
@@ -40,9 +69,15 @@ class TuppyTCGGame(FloatLayout):
         creatures = list(creature_cards.values())
         for i in range(5):
             new_card = Card(random.choice(creatures))
-            new_card.pos = (15*(i+1) + 175 * i, 15)
+            new_card.pos = (15 * (i + 1) + 175 * i, 15)
             new_card.size_hint = (None, None)
             self.add_widget(new_card)
+
+    def on_touch_down(self, touch):
+        card_touched = super(TuppyTCGGame, self).on_touch_down(touch)
+        if not card_touched and Card.card_selected is not None:
+            Card.card_selected.unselect()
+
 
 class TuppyTCGApp(App):
     def build(self):
