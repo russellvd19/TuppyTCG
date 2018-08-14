@@ -29,7 +29,7 @@ class CardSlot(Widget):
                 if self.card is None:
                     self.card = Card.card_selected
                     self.card_widget = Card.card_widget
-                    Card.card_widget.pos = self.x + 10, self.y + 20
+                    Card.card_widget.pos = self.pos
 
 
 class Field(BoxLayout):
