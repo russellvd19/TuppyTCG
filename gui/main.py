@@ -12,7 +12,10 @@ from kivy.config import Config
 Config.set('graphics', 'width', '965')
 Config.set('graphics', 'height', '635')
 from utils import import_data
+from game import Game
+from card import Card
 import random
+from copy import deepcopy
 
 
 class CardSlot(Widget):
@@ -25,11 +28,12 @@ class CardSlot(Widget):
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
             print("CardSlot was selected")
-            if Card.card_selected is not None:
+            if GUICard.card_selected is not None:
                 if self.card is None:
-                    self.card = Card.card_selected
-                    self.card_widget = Card.card_widget
-                    Card.card_widget.pos = self.pos
+                    if TuppyTCGGame.game.play_card(TuppyTCGGame.game.player_one, GUICard.card_selected):
+                        self.card = GUICard.card_selected
+                        self.card_widget = GUICard.card_widget
+                        GUICard.card_widget.pos = self.pos
 
 
 class Field(BoxLayout):
@@ -39,7 +43,7 @@ class Field(BoxLayout):
     card4 = ObjectProperty(None)
 
 
-class Card(RelativeLayout):
+class GUICard(RelativeLayout):
     border_color = ListProperty([.1, .1, 1, .9])
     background_color = ListProperty([1, 1, 1, .5])
 
@@ -47,17 +51,17 @@ class Card(RelativeLayout):
     card_widget = None
 
     def __init__(self, **kwargs):
-        super(Card, self).__init__(**kwargs)
+        super(GUICard, self).__init__(**kwargs)
         self.card = None
         self.unselected_color = [.1, .1, 1, .9]
         self.selected_color = [1, .1, .1, .9]
 
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
-            if Card.card_widget == self:
+            if GUICard.card_widget == self:
                 self.unselect()
-            elif Card.card_widget is not None:
-                Card.card_widget.unselect()
+            elif GUICard.card_widget is not None:
+                GUICard.card_widget.unselect()
                 self.select()
             else:
                 self.select()
@@ -66,16 +70,16 @@ class Card(RelativeLayout):
 
     def unselect(self):
         self.border_color = self.unselected_color
-        Card.card_selected = None
-        Card.card_widget = None
+        GUICard.card_selected = None
+        GUICard.card_widget = None
 
     def select(self):
         self.border_color = self.selected_color
-        Card.card_selected = self.card
-        Card.card_widget = self
+        GUICard.card_selected = self.card
+        GUICard.card_widget = self
 
 
-class CreatureCard(Card):
+class CreatureCard(GUICard):
     card_type = ObjectProperty(None)
     card_energy = ObjectProperty(None)
     card_health = ObjectProperty(None)
@@ -97,13 +101,15 @@ class CreatureCard(Card):
 
 
 class TuppyTCGGame(FloatLayout):
+    game = Game()
     def __init__(self, **kwargs):
         super(TuppyTCGGame, self).__init__(**kwargs)
-        creature_cards, armor_cards, weapon_cards, upgrade_cards = import_data("../data/")
-        cards = []
-        creatures = list(creature_cards.values())
+        creatures = list(TuppyTCGGame.game.creature_cards.values())
         for i in range(5):
-            new_card = CreatureCard(random.choice(creatures))
+            creature_card = deepcopy(random.choice(creatures))
+            creature_card.unique_id = Card.next_id()
+            new_card = CreatureCard(creature_card)
+            TuppyTCGGame.game.player_one.hand.append(creature_card)
             new_card.pos = (15 * (i + 1) + 175 * i, 15)
             new_card.size_hint = (None, None)
             self.add_widget(new_card)
@@ -115,8 +121,8 @@ class TuppyTCGGame(FloatLayout):
 
     def on_touch_down(self, touch):
         card_touched = super(TuppyTCGGame, self).on_touch_down(touch)
-        if not card_touched and Card.card_selected is not None:
-            Card.card_widget.unselect()
+        if not card_touched and GUICard.card_selected is not None:
+            GUICard.card_widget.unselect()
 
 
 class TuppyTCGApp(App):

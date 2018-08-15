@@ -91,3 +91,6 @@ class Creature(Card):
         if self.name == "":
             return False
         return True
+
+    def __hash__(self):
+        return hash(self.unique_id)

@@ -6,12 +6,9 @@ from utils import *
 
 
 class Game:
-
     def __init__(self):
-        self.creature_cards = {}
-        self.armor_cards = {}
-        self.weapon_cards = {}
-        self.upgrade_cards = {}
+        data_dir = os.path.join(os.path.dirname(__file__), "data/")
+        self.creature_cards, self.armor_cards, self.weapon_cards, self.upgrade_cards = import_data(data_dir)
 
         self.player_one = Player("Player 1")
         self.player_two = Player("Player 2")
@@ -215,22 +212,29 @@ class Game:
 
     def play_card(self, player, card):
         """Puts a creature/armor/weapon into play"""
+        if card in player.field:
+            print("That card is already in play.")
+            return False
+
         if card not in player.hand:
             print("You can only play cards from your hand to the field.")
-            return
+            return False
 
         if len(player.field) >= 4:
             print("Only 4 creatures can be on the field at one time")
-            return
+            return False
 
         if isinstance(card, Creature):
             player.field.append(card)
             player.hand.remove(card)
-        elif isinstance(card, Armor) or isinstance(card, Weapon):
+            return True
+        elif isinstance(card, (Armor, Weapon)):
             player.unused_items_on_field.append(card)
             player.hand.remove(card)
+            return True
         else:
             print("Only creatures and items can be played directly to the field. Not upgrades.")
+            return False
 
 
     def play_card_on_card(self, player, base_card, addon_card):
