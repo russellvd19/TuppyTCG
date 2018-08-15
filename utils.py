@@ -5,6 +5,7 @@ from copy import deepcopy
 from ast import literal_eval
 
 import texttable
+from card import Card
 from creature import Creature
 from armor import Armor
 from weapon import Weapon
@@ -50,6 +51,9 @@ def make_deck(creature_cards, armor_cards, weapon_cards, upgrade_cards, deck_siz
     complete_deck = creatures + armors + weapons + upgrades
     while len(complete_deck) > deck_size:
         complete_deck.remove(random.choice(complete_deck))
+
+    for card in complete_deck:
+        card.unique_id = Card.next_id()
 
     random.shuffle(complete_deck)
     return complete_deck
