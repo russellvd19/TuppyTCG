@@ -46,17 +46,10 @@
 
 <Card>:
     size: 175, 275
-    card_type: type_id
-    card_energy: energy_id
-    card_health: health_id
-    card_name: name_id
-    card_image: image_id
-    card_attack: attack_id
-    card_damage: damage_id
 
     canvas.before:
         Color:
-            rgba: 1, 1, 1, .5
+            rgba: self.background_color
         Rectangle:
             pos: 0, 0
             size: self.size
@@ -67,6 +60,17 @@
         Line:
             width: 2.
             rectangle: (0, 0, self.width, self.height)
+
+
+<CreatureCard>:
+    size: 175, 275
+    card_type: type_id
+    card_energy: energy_id
+    card_health: health_id
+    card_name: name_id
+    card_image: image_id
+    card_attack: attack_id
+    card_damage: damage_id
 
     Label:
         id: energy_id

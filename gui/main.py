@@ -40,6 +40,42 @@ class Field(BoxLayout):
 
 
 class Card(RelativeLayout):
+    border_color = ListProperty([.1, .1, 1, .9])
+    background_color = ListProperty([1, 1, 1, .5])
+
+    card_selected = None
+    card_widget = None
+
+    def __init__(self, **kwargs):
+        super(Card, self).__init__(**kwargs)
+        self.card = None
+        self.unselected_color = [.1, .1, 1, .9]
+        self.selected_color = [1, .1, .1, .9]
+
+    def on_touch_down(self, touch):
+        if self.collide_point(*touch.pos):
+            if Card.card_widget == self:
+                self.unselect()
+            elif Card.card_widget is not None:
+                Card.card_widget.unselect()
+                self.select()
+            else:
+                self.select()
+            return True
+        return False
+
+    def unselect(self):
+        self.border_color = self.unselected_color
+        Card.card_selected = None
+        Card.card_widget = None
+
+    def select(self):
+        self.border_color = self.selected_color
+        Card.card_selected = self.card
+        Card.card_widget = self
+
+
+class CreatureCard(Card):
     card_type = ObjectProperty(None)
     card_energy = ObjectProperty(None)
     card_health = ObjectProperty(None)
@@ -47,13 +83,9 @@ class Card(RelativeLayout):
     card_image = ObjectProperty(None)
     card_attack = ObjectProperty(None)
     card_damage = ObjectProperty(None)
-    border_color = ListProperty([.1, .1, 1, .9])
-
-    card_selected = None
-    card_widget = None
 
     def __init__(self, card, **kwargs):
-        super(Card, self).__init__(**kwargs)
+        super(CreatureCard, self).__init__(**kwargs)
         self.card = card
         self.card_type.text = repr(card.creature_type)
         self.card_energy.text = str(int(card.energy))
@@ -63,29 +95,6 @@ class Card(RelativeLayout):
         self.card_attack.text = str(int(card.base_attack))
         self.card_damage.text = str(int(card.damage_negation))
 
-    def on_touch_down(self, touch):
-        if self.collide_point(*touch.pos):
-            if Card.card_selected is not None:
-                Card.card_selected.unselect()
-
-            if Card.card_selected == self:
-                Card.card_selected = None
-                Card.card_widget = None
-            else:
-                Card.card_selected = self
-                Card.card_widget = self
-                self.select()
-            return True
-        return False
-
-    def unselect(self):
-        self.border_color = [.1, .1, 1, .9]
-        print("{} unselected".format(self.card.name))
-
-    def select(self):
-        self.border_color = [1, .1, .1, .9]
-        print("{} selected".format(self.card.name))
-
 
 class TuppyTCGGame(FloatLayout):
     def __init__(self, **kwargs):
@@ -94,7 +103,7 @@ class TuppyTCGGame(FloatLayout):
         cards = []
         creatures = list(creature_cards.values())
         for i in range(5):
-            new_card = Card(random.choice(creatures))
+            new_card = CreatureCard(random.choice(creatures))
             new_card.pos = (15 * (i + 1) + 175 * i, 15)
             new_card.size_hint = (None, None)
             self.add_widget(new_card)
@@ -107,9 +116,7 @@ class TuppyTCGGame(FloatLayout):
     def on_touch_down(self, touch):
         card_touched = super(TuppyTCGGame, self).on_touch_down(touch)
         if not card_touched and Card.card_selected is not None:
-            Card.card_selected.unselect()
-            Card.card_selected = None
-            Card.card_widget = None
+            Card.card_widget.unselect()
 
 
 class TuppyTCGApp(App):
