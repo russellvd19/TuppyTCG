@@ -99,7 +99,7 @@ class CreatureCard(Card):
 class TuppyTCGGame(FloatLayout):
     def __init__(self, **kwargs):
         super(TuppyTCGGame, self).__init__(**kwargs)
-        creature_cards, armor_cards, weapon_cards, upgrade_cards = import_data()
+        creature_cards, armor_cards, weapon_cards, upgrade_cards = import_data("../data/")
         cards = []
         creatures = list(creature_cards.values())
         for i in range(5):

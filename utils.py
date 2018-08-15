@@ -9,7 +9,7 @@ from creature import Creature
 from armor import Armor
 from weapon import Weapon
 from upgrade import Upgrade
-
+import os
 
 def print_all_cards(creature_cards, armor_cards, weapon_cards, upgrade_cards):
     """Prints all of the cards currently existing"""
@@ -55,10 +55,10 @@ def make_deck(creature_cards, armor_cards, weapon_cards, upgrade_cards, deck_siz
     return complete_deck
 
 
-def import_data():
+def import_data(data_dir):
     """Loads all csv files of cards"""
     creature_cards = {}
-    with open("../data/creatures.csv", "r") as in_file:
+    with open(os.path.join(data_dir, "creatures.csv"), "r") as in_file:
         csv_reader = csv.DictReader(in_file, quoting=csv.QUOTE_NONNUMERIC)
         unnamed_count = 0
         for row in csv_reader:
@@ -70,7 +70,7 @@ def import_data():
             creature_cards[name] = Creature(name, row["type"], row["energy"], row["health"], row["attack"])
 
     armor_cards = {}
-    with open("../data/armors.csv", "r") as in_file:
+    with open(os.path.join(data_dir, "armors.csv"), "r") as in_file:
         csv_reader = csv.DictReader(in_file, quoting=csv.QUOTE_NONNUMERIC)
         for row in csv_reader:
             # Armor(name, attack, damage_negation_per_combat, max_damage_negation)
@@ -80,7 +80,7 @@ def import_data():
                                              row["max_damage_negation"])
 
     weapon_cards = {}
-    with open("../data/weapons.csv", "r") as in_file:
+    with open(os.path.join(data_dir, "weapons.csv"), "r") as in_file:
         csv_reader = csv.DictReader(in_file, quoting=csv.QUOTE_NONNUMERIC)
         for row in csv_reader:
             # Weapon(name, attack, max_uses)
@@ -89,7 +89,7 @@ def import_data():
             weapon_cards[row["name"]] = Weapon(row["name"], row["attack"], row["max_uses"])
 
     upgrade_cards = {}
-    with open("../data/upgrades.csv", "r") as in_file:
+    with open(os.path.join(data_dir, "upgrades.csv"), "r") as in_file:
         csv_reader = csv.DictReader(in_file, quoting=csv.QUOTE_NONNUMERIC)
         for row in csv_reader:
             # Upgrade(name, upgrades)
