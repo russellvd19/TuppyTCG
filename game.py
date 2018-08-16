@@ -45,40 +45,29 @@ class Game:
     def start_game(self):
         # Flip a coin to see who goes first
         if random.choice([True, False]):
-            first_player = self.player_one
-            second_player = self.player_two
+            self.current_player = self.player_one
         else:
-            first_player = self.player_two
-            second_player = self.player_one
-        self.current_player = first_player
+            self.current_player = self.player_two
 
-        print("{} is going first.".format(first_player))
+        print("{} is going first.".format(self.current_player))
 
         game_over = False
         while not game_over:
-            print("{}'s turn.".format(first_player))
-            first_player.start_turn()
-            action = first_player.get_action()
+            print("{}'s turn.".format(self.current_player))
+            self.current_player.start_turn()
+            action = self.current_player.get_action()
             while action.get("action", "end") is not "end":
-                self.do_action(first_player, action)
+                self.do_action(self.current_player, action)
                 if self.is_game_over():
                     game_over = True
                     break
-                action = first_player.get_action()
-            first_player.end_turn()
-            first_player.wait_for_turn()
-
-            print("{}'s turn.".format(second_player))
-            second_player.start_turn()
-            action = second_player.get_action()
-            while action.get("action", "end") is not "end":
-                self.do_action(second_player, action)
-                if self.is_game_over():
-                    game_over = True
-                    break
-                action = second_player.get_action()
-            first_player.end_turn()
-            first_player.wait_for_turn()
+                action = self.current_player.get_action()
+            self.current_player.end_turn()
+            self.current_player.wait_for_turn()
+            if self.current_player == self.player_one:
+                self.current_player = self.player_two
+            else:
+                self.current_player = self.player_one
 
 
     def end_game(self, winner, loser):
@@ -143,6 +132,7 @@ class Game:
 
     def attack_card_with_card(self, player, my_card, their_card):
         """Completes combat between the two cards. 'my_card' is the one attacking."""
+
         if my_card.controller != player or their_card.controller == player:
             print("Uhh, you can only attack their creatures with your creatures.")
             return
