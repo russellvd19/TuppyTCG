@@ -9,13 +9,26 @@ class Game:
     def __init__(self):
         data_dir = os.path.join(os.path.dirname(__file__), "data/")
         self.creature_cards, self.armor_cards, self.weapon_cards, self.upgrade_cards = import_data(data_dir)
+        self.player_one = None
+        self.player_two = None
 
-        self.player_one = Player("Player 1")
-        self.player_two = Player("Player 2")
         self.current_player = None
         self.player_resigned = None
 
+    def add_player(self, name):
+        if self.player_one is None:
+            self.player_one = Player(name)
+        elif self.player_two is None:
+            self.player_two = Player(name)
+        else:
+            print("Unable to add {}. Already two players playing.".format(name))
+            return
+        print("{} has been added to the game.".format(name))
+
     def run(self):
+        self.add_player("Tuppy")
+        self.add_player("Skittles")
+
         # Create a deck for each player
         for player in [self.player_one, self.player_two]:
             new_deck = make_deck(self.creature_cards, self.armor_cards, self.weapon_cards, self.upgrade_cards)
