@@ -2,6 +2,20 @@
 
 <TuppyTCGGame>:
 
+<Message>:
+    opacity: 0
+    message_text: label_id
+    Label:
+        id: label_id
+        font_size:60
+        canvas.before:
+            Color:
+                rgba: self.parent.background_color
+            RoundedRectangle:
+                size: self.texture_size[0] + 20, self.texture_size[1] + 20
+                pos: self.center_x - self.texture_size[0] * 0.5 - 10, self.center_y - self.texture_size[1] * 0.5 - 10
+
+
 <CardSlot>:
     card_widget: widget_id
     Widget:

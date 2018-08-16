@@ -1,19 +1,29 @@
 from kivy.app import App
 from kivy.uix.widget import Widget
+from kivy.uix.label import Label
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import ObjectProperty
 from kivy.properties import ListProperty
 from kivy.config import Config
+from kivy.animation import Animation
+from kivy.clock import Clock
+from threading import Thread
 
 Config.set('graphics', 'width', '965')
 Config.set('graphics', 'height', '800')
 
 import random
 from copy import deepcopy
+from functools import partial
 from game import Game
 from card import Card
+
+class Message(BoxLayout):
+    message_text = ObjectProperty(None)
+    background_color = ListProperty([.3, .3, .6, 1])
+
 
 
 class CardSlot(Widget):
@@ -100,9 +110,12 @@ class CreatureCard(GUICard):
 
 class TuppyTCGGame(FloatLayout):
     game = Game()
+    main_screen_message = None
 
     def __init__(self, **kwargs):
         super(TuppyTCGGame, self).__init__(**kwargs)
+        TuppyTCGGame.main_screen_message = Message()
+
         creatures = list(TuppyTCGGame.game.creature_cards.values())
         for i in range(5):
             creature_card = deepcopy(random.choice(creatures))
@@ -123,11 +136,32 @@ class TuppyTCGGame(FloatLayout):
         opponent_field.size_hint = (None, None)
         self.add_widget(opponent_field)
 
+        self.add_widget(TuppyTCGGame.main_screen_message)
+
+        #start_message = "{} is going first.".format(TuppyTCGGame.game.current_player)
+        #Clock.schedule_once(lambda dt: TuppyTCGGame.display_message(start_message), 1)
+
     def on_touch_down(self, touch):
         card_touched = super(TuppyTCGGame, self).on_touch_down(touch)
         if not card_touched and GUICard.card_selected is not None:
             GUICard.card_widget.unselect()
 
+    @staticmethod
+    def display_message(message, time=3):
+        if time < 2:
+            return
+
+        if TuppyTCGGame.main_screen_message.opacity == 0:
+            TuppyTCGGame.main_screen_message.message_text.text = message
+            def hide_label(dt):
+                anim2 = Animation(opacity=0, duration=1)
+                anim2.start(TuppyTCGGame.main_screen_message)
+
+            Clock.schedule_once(hide_label, time - 2)
+            anim = Animation(opacity=1, duration=1)
+            anim.start(TuppyTCGGame.main_screen_message)
+        else:
+            print("A message is already being displayed.")
 
 class TuppyTCGApp(App):
     def build(self):

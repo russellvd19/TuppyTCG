@@ -12,12 +12,13 @@ class Game:
 
         self.player_one = Player("Player 1")
         self.player_two = Player("Player 2")
+        self.current_player = None
         self.player_resigned = None
 
     def run(self):
         # Create a deck for each player
         for player in [self.player_one, self.player_two]:
-            new_deck = make_deck(creature_cards, armor_cards, weapon_cards, upgrade_cards)
+            new_deck = make_deck(self.creature_cards, self.armor_cards, self.weapon_cards, self.upgrade_cards)
             for card in new_deck:
                 card.controller = player
             player.deck = new_deck
@@ -49,6 +50,7 @@ class Game:
         else:
             first_player = self.player_two
             second_player = self.player_one
+        self.current_player = first_player
 
         print("{} is going first.".format(first_player))
 
@@ -275,6 +277,5 @@ class Game:
 
 
 if __name__ == "__main__":
-    creature_cards, armor_cards, weapon_cards, upgrade_cards = import_data("data/")
     game = Game()
     game.run()
