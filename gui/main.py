@@ -5,17 +5,15 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import ObjectProperty
 from kivy.properties import ListProperty
-from kivy.graphics import Color
-
 from kivy.config import Config
 
 Config.set('graphics', 'width', '965')
-Config.set('graphics', 'height', '635')
-from utils import import_data
-from game import Game
-from card import Card
+Config.set('graphics', 'height', '800')
+
 import random
 from copy import deepcopy
+from game import Game
+from card import Card
 
 
 class CardSlot(Widget):
@@ -102,6 +100,7 @@ class CreatureCard(GUICard):
 
 class TuppyTCGGame(FloatLayout):
     game = Game()
+
     def __init__(self, **kwargs):
         super(TuppyTCGGame, self).__init__(**kwargs)
         creatures = list(TuppyTCGGame.game.creature_cards.values())
@@ -110,14 +109,19 @@ class TuppyTCGGame(FloatLayout):
             creature_card.unique_id = Card.next_id()
             new_card = CreatureCard(creature_card)
             TuppyTCGGame.game.player_one.hand.append(creature_card)
-            new_card.pos = (15 * (i + 1) + 175 * i, 15)
+            new_card.pos = (15 * (i + 1) + 175 * i, 10)
             new_card.size_hint = (None, None)
             self.add_widget(new_card)
 
         field = Field()
-        field.pos = (92.5, 305)
+        field.pos = (92.5, 255)
         field.size_hint = (None, None)
         self.add_widget(field)
+
+        opponent_field = Field()
+        opponent_field.pos = (92.5, 520)
+        opponent_field.size_hint = (None, None)
+        self.add_widget(opponent_field)
 
     def on_touch_down(self, touch):
         card_touched = super(TuppyTCGGame, self).on_touch_down(touch)

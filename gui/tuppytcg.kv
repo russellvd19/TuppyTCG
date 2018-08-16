@@ -10,12 +10,12 @@
         on_touch_down: root.on_touch_down(*args[1])
 
 <Field>:
-    size: 780, 315
+    size: 780, 255
     card1: slot1
     card2: slot2
     card3: slot3
     card4: slot4
-    padding: [10, 20]
+    padding: [10, 10]
     spacing: 20
 
     canvas:
@@ -45,7 +45,7 @@
 
 
 <GUICard>:
-    size: 175, 275
+    size: 175, 235
 
     canvas.before:
         Color:
@@ -63,7 +63,6 @@
 
 
 <CreatureCard>:
-    size: 175, 275
     card_type: type_id
     card_energy: energy_id
     card_health: health_id
@@ -102,52 +101,54 @@
         font_size: 18
         text: "Creature Name"
         text_size: self.size
-        pos: 15, root.height - 60
+        pos: 15, root.height - 55
 
-    Widget:
+    RelativeLayout:
         id: image_id
+        size_hint: None, None
+        size: root.width - 30, root.height - 65 - 70
+        pos: 15, 70
         canvas.before:
             Color:
                 rgba: .1, .1, .1, .5
             Rectangle:
-                pos: 15, 90
-                size: self.parent.width - 30, self.parent.height - 30 - 75 - 60
+                size: self.width, self.height
         canvas:
             Color:
                 rgba: .1, .1, 1, .9
             Line:
                 width: 1.5
-                rectangle: (15, 90, self.parent.width - 30, self.parent.height - 30 - 75 - 60)
+                rectangle: (0, 0, self.width, self.height)
 
-    Label:
-        font_size: 14
-        text: "Creature Image"
-        text_size: self.size
-        halign: "center"
-        valign: "center"
-        pos: 0, 0
+        Label:
+            font_size: 14
+            text: "Creature Image"
+            text_size: self.size
+            halign: "center"
+            valign: "center"
+            pos: 0, 0
 
     Label:
         font_size: 14
         text: "Attack:"
         text_size: self.size
-        pos: 15, 60
+        pos: 15, 45
     Label:
         id: attack_id
         font_size: 14
         text: "+2"
         text_size: self.size
         halign: "right"
-        pos: root.width - 15 - self.width, 60
+        pos: root.width - 15 - self.width, 45
     Label:
         font_size: 14
         text: "Damage\nnegation:"
         text_size: self.size
-        pos: 15, 15
+        pos: 15, 5
     Label:
         id: damage_id
         font_size: 14
         text: "30 remaining\n5/combat"
         text_size: self.size
         halign: "right"
-        pos: root.width - 15 - self.width, 15
+        pos: root.width - 15 - self.width, 5
