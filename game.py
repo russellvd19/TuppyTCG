@@ -4,7 +4,6 @@ from player import Player
 from utils import *
 
 
-
 class Game:
     def __init__(self):
         data_dir = os.path.join(os.path.dirname(__file__), "data/")
@@ -21,9 +20,8 @@ class Game:
         elif self.player_two is None:
             self.player_two = Player(name)
         else:
-            print("Unable to add {}. Already two players playing.".format(name))
-            return
-        print("{} has been added to the game.".format(name))
+            return False
+        return True
 
     def run(self):
         self.add_player("Tuppy")
@@ -54,7 +52,6 @@ class Game:
         else:
             print("IDK what happened, but apparently nobody won")
 
-
     def start_game(self):
         # Flip a coin to see who goes first
         if random.choice([True, False]):
@@ -82,11 +79,9 @@ class Game:
             else:
                 self.current_player = self.player_one
 
-
     def end_game(self, winner, loser):
         """Gives each player all the experience they earned and resets stuff probably"""
         pass
-
 
     def do_action(self, player, action):
         """Performs an action for a player. Will get moved to web service?"""
@@ -112,7 +107,6 @@ class Game:
         else:
             print("'{}' doesn't exist as an action.".format(action["action"]))
 
-
     def is_game_over(self):
         """Checks if the game is over yet."""
         if self.player_resigned is not None:
@@ -121,7 +115,6 @@ class Game:
         if self.player_one.shards > 10 or self.player_two.shards > 10:
             return True
         return False
-
 
     def get_winner(self):
         """Returns the winning player of the current game"""
@@ -141,7 +134,6 @@ class Game:
         else:
             # Tiebreaker; choose a random winner for now
             return random.choice([self.player_one, self.player_two])
-
 
     def attack_card_with_card(self, player, my_card, their_card):
         """Completes combat between the two cards. 'my_card' is the one attacking."""
@@ -190,14 +182,11 @@ class Game:
             their_card.controller.shards += shards
             their_card.controller.xp[their_card.name] += xp
 
-
     def attack_with(self, my_card):
         pass
 
-
     def cancel_attack(self, my_card):
         pass
-
 
     def help(self):
         commands = {"help": "Prints this message.",
@@ -213,7 +202,6 @@ class Game:
         print("Command list:")
         for command, description in commands.items():
             print("'{}' :- {}".format(command, description))
-
 
     def play_card(self, player, card):
         """Puts a creature/armor/weapon into play"""
@@ -240,7 +228,6 @@ class Game:
         else:
             print("Only creatures and items can be played directly to the field. Not upgrades.")
             return False
-
 
     def play_card_on_card(self, player, base_card, addon_card):
         """Attaches a card to another card"""
