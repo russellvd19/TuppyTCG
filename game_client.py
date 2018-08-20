@@ -58,6 +58,10 @@ class MyPlayerListener(MyNetworkListener):
         print("Game id: {}".format(data["game_id"]))
         self.game_id = data["game_id"]
 
+    def Network_opponent_disconnected(self, data):
+        print("Opponent disconnected.")
+        print(data["message"])
+
 
 if __name__ == "__main__":
     myConnection = MyPlayerListener('localhost', 1337)

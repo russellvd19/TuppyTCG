@@ -2,26 +2,63 @@ import time
 
 from player import Player
 from utils import *
+from uuid import uuid4
 
 
 class Game:
-    def __init__(self):
+    def __init__(self, game_type):
         data_dir = os.path.join(os.path.dirname(__file__), "data/")
         self.creature_cards, self.armor_cards, self.weapon_cards, self.upgrade_cards = import_data(data_dir)
         self.player_one = None
         self.player_two = None
 
+        self.accepting_players = True
         self.current_player = None
         self.player_resigned = None
+        self.game_id = str(uuid4())
+        self.game_type = game_type
 
-    def add_player(self, name):
-        if self.player_one is None:
-            self.player_one = Player(name)
-        elif self.player_two is None:
-            self.player_two = Player(name)
+    def add_player(self, name, addr):
+        """Returns True if added, False if not added"""
+        if self.accepting_players:
+            if self.player_one is None:
+                self.player_one = Player(name, addr)
+                return True
+            elif self.player_two is None:
+                self.player_two = Player(name, addr)
+                return True
+        return False
+
+    def del_player(self, addr):
+        """Returns True if the game can be kept, False to be destroyed"""
+        self.accepting_players = False
+        if self.player_one:
+            if self.player_two:
+                if addr == self.player_one:
+                    print("Deleting player one")
+                    self.player_one = self.player_two
+                    self.player_two = None
+                elif addr == self.player_two:
+                    print("Deleting player two")
+                    self.player_two = None
+                self.player_one.is_ready = False
+            else:
+                if addr == self.player_one:
+                    self.player_one = None
+
+    def ready_player(self, addr):
+        if self.player_one is not None and self.player_one == addr:
+            self.player_one.is_ready = True
+        elif self.player_two is not None and self.player_two == addr:
+            self.player_two.is_ready = True
         else:
-            return False
-        return True
+            return
+
+        if self.player_one is not None and self.player_two is not None:
+            if self.player_one.is_ready and self.player_two.is_ready:
+                return True
+        return False
+
 
     def run(self):
         self.add_player("Tuppy")
@@ -103,7 +140,7 @@ class Game:
 
         elif action["action"] == "quit":
             self.player_resigned = player
-            print("{} has decided to quit.".format(player))
+            print("{} has quit.".format(player))
         else:
             print("'{}' doesn't exist as an action.".format(action["action"]))
 

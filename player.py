@@ -5,8 +5,9 @@ from utils import print_cards
 
 class Player():
 
-    def __init__(self, name):
+    def __init__(self, name, addr):
         self.name = name
+        self.connection_address = addr
         self.field = []
         self.unused_items_on_field = []
         self.discarded_cards = []
@@ -14,6 +15,7 @@ class Player():
         self.hand = []
         self.xp = {}
         self.shards = 0
+        self.is_ready = False
 
     def start_turn(self):
         print("It's your turn.")
@@ -123,6 +125,16 @@ class Player():
     def __repr__(self):
         return self.name
 
+    def __eq__(self, other):
+        if isinstance(other, Player):
+            if self.connection_address == other.connection_address and self.name == other.name:
+                return True
+        if isinstance(other, str):
+            if self.connection_address == other:
+                return True
+        return False
+
 def help():
-    from main import help as main_help
-    main_help()
+    #from game import help as main_help
+    #main_help()
+    pass
