@@ -9,10 +9,8 @@ class MyNetworkListener(ConnectionListener):
         self.Connect((host, port))
 
     def Loop(self):
-        while True:
-            self.Pump()
-            connection.Pump()
-            sleep(0.001)
+        self.Pump()
+        connection.Pump()
 
     def Network(self, data):
         print('network data:', data)

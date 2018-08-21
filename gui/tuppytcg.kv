@@ -2,6 +2,55 @@
 
 <TuppyTCGGame>:
 
+<MenuScreen>:
+    BoxLayout:
+        padding: 50
+        spacing: 30
+        orientation: "vertical"
+        Button:
+            text: "Create new private game."
+            on_press: root.create_private()
+        Button:
+            text: "Join private game."
+            on_press: root.join_private()
+        Button:
+            text: "Join any game."
+            on_press: root.join_any()
+
+<LoadScreen>:
+    text_input: text_input
+    Label:
+        size_hint: None, None
+        width: root.width
+        text: "Welcome to Tuppy's TCG"
+        underline: True
+        y: root.height - self.texture_size[1] - 100
+        font_size: 72
+
+    BoxLayout:
+        size_hint: None, None
+        size: root.width/2, 100
+        pos: self.width/2, (root.height - self.height) / 2
+        orientation: "vertical"
+        padding: 10
+        spacing: 10
+        BoxLayout:
+            spacing: 10
+            Label:
+                text: "Enter your nickname:"
+                font_size: 24
+            TextInput:
+                id: text_input
+                font_size: 20
+                text: ""
+                multiline: False
+                on_text_validate: root.submit_nickname()
+                focus: True
+        Button:
+            text: "Submit"
+            on_press: root.submit_nickname()
+
+
 <Message>:
     opacity: 0
     message_text: label_id

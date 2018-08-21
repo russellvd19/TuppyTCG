@@ -4,11 +4,18 @@ from kivy.uix.label import Label
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.button import Button
+from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
+
+from kivy.uix.popup import Popup
+from kivy.uix.textinput import TextInput
 from kivy.properties import ObjectProperty
 from kivy.properties import ListProperty
 from kivy.config import Config
 from kivy.animation import Animation
 from kivy.clock import Clock
+
 from threading import Thread
 
 Config.set('graphics', 'width', '965')
@@ -19,11 +26,12 @@ from copy import deepcopy
 from functools import partial
 from game import Game
 from card import Card
+from game_client import MyPlayerListener
+
 
 class Message(BoxLayout):
     message_text = ObjectProperty(None)
     background_color = ListProperty([.3, .3, .6, 1])
-
 
 
 class CardSlot(Widget):
@@ -153,6 +161,7 @@ class TuppyTCGGame(FloatLayout):
 
         if TuppyTCGGame.main_screen_message.opacity == 0:
             TuppyTCGGame.main_screen_message.message_text.text = message
+
             def hide_label(dt):
                 anim2 = Animation(opacity=0, duration=1)
                 anim2.start(TuppyTCGGame.main_screen_message)
@@ -163,9 +172,78 @@ class TuppyTCGGame(FloatLayout):
         else:
             print("A message is already being displayed.")
 
+
+class LoadScreen(Screen):
+    text_input = ObjectProperty(None)
+
+    def __init__(self, **kwargs):
+        super(LoadScreen, self).__init__(**kwargs)
+
+    def submit_nickname(self):
+        if self.text_input.text != "":
+            TuppyTCG.myConnection.register(self.text_input.text)
+            TuppyTCG.screenManager.current = "menu"
+
+
+class MenuScreen(Screen):
+    def __init__(self, **kwargs):
+        super(MenuScreen, self).__init__(**kwargs)
+
+    def join_private(self):
+        layout = BoxLayout(padding=10, spacing=10, orientation="vertical")
+        textInput = TextInput(multiline=False, font_size=26)
+        subLayout = BoxLayout(spacing=10)
+        submitButton = Button(text="Submit")
+        closeButton = Button(text="Cancel")
+        layout.add_widget(textInput)
+        subLayout.add_widget(submitButton)
+        subLayout.add_widget(closeButton)
+        layout.add_widget(subLayout)
+
+        popup = Popup(title="What is the game id?", content=layout, size_hint=(None, None), size=(400, 200))
+
+        def _submit_game(instance):
+            popup.dismiss()
+            print("Trying to join {}".format(textInput.text))
+            TuppyTCG.myConnection.join(game_id="", game_type="private")
+
+        closeButton.bind(on_press=popup.dismiss)
+        submitButton.bind(on_press=_submit_game)
+        popup.open()
+
+        def _set_focus():
+            textInput.focus = True
+
+        Clock.schedule_once(lambda dt: _set_focus(), 0.2)
+
+    def join_any(self):
+        print("Join any")
+        TuppyTCG.myConnection.join()
+
+    def create_private(self):
+        print("Create private")
+        TuppyTCG.myConnection.join(game_type="private")
+
+
+class TuppyTCG(FloatLayout):
+    screenManager = None
+    myConnection = None
+
+    def __init__(self, **kwargs):
+        super(TuppyTCG, self).__init__(**kwargs)
+        TuppyTCG.myConnection = MyPlayerListener('localhost', 1337)
+        Clock.schedule_interval(lambda dt: TuppyTCG.myConnection.Loop(), 0.001)
+
+        TuppyTCG.screenManager = ScreenManager(transition=FadeTransition())
+        TuppyTCG.screenManager.add_widget(LoadScreen(name="load"))
+        TuppyTCG.screenManager.add_widget(MenuScreen(name='menu'))
+
+        self.add_widget(TuppyTCG.screenManager)
+
+
 class TuppyTCGApp(App):
     def build(self):
-        return TuppyTCGGame()
+        return TuppyTCG()
 
 
 if __name__ == '__main__':
